@@ -1,12 +1,10 @@
 package com.fractalwrench.colorcam
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.Palette
 import com.flurgle.camerakit.CameraListener
+import com.fractalwrench.colorcam.image.BitmapRepository
 import com.fractalwrench.crazycats.injection.DefaultSchedulers
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
@@ -15,12 +13,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class CameraActivity : AppCompatActivity() {
 
     private val cameraListener = ColorCameraListener()
     private var disposable: CompositeDisposable? = null
 
     @Inject lateinit var schedulers: DefaultSchedulers
+    @Inject lateinit var repository: BitmapRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,17 +52,16 @@ class MainActivity : AppCompatActivity() {
     private fun onBitmapCreated(jpeg: ByteArray?) {
         val observable = Observable.just(jpeg)
                 .map { BitmapFactory.decodeByteArray(jpeg, 0, jpeg?.size!!) }
-                .map { bmp: Bitmap ->
-                    val palette = Palette.from(bmp).generate()
-                    bmp.recycle()
-                    palette
+                .map {
+                    repository.saveBitmap(it)
+                    it.recycle()
                 }
-                .compose { o -> schedulers.apply(o) }
+                .compose { schedulers.apply(it) }
 
-        disposable?.add(observable.subscribe {
-            palette: Palette ->
-            palette.getDarkMutedColor(Color.WHITE)
+        disposable?.add(observable.subscribe({
             startActivity(ColorDisplayActivity.launch(this))
+        }) {
+            it?.printStackTrace() // TODO
         })
     }
 

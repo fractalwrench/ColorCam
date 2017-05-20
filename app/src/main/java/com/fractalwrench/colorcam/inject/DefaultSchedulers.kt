@@ -6,15 +6,7 @@ import io.reactivex.Scheduler
 /**
  * Defines io/ui schedulers (which are swapped out to facilitate testing)
  */
-class DefaultSchedulers(private val io: Scheduler, private val ui: Scheduler) {
-
-    fun io(): Scheduler {
-        return io
-    }
-
-    fun ui(): Scheduler {
-        return ui
-    }
+class DefaultSchedulers(val io: Scheduler, val ui: Scheduler) {
 
     /**
      * Should be called using [Observable.compose] to set the default

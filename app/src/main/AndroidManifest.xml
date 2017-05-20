@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme.FullScreen"
         >
         <activity
-            android:name=".MainActivity"
+            android:name=".CameraActivity"
             android:screenOrientation="portrait"
             >
             <intent-filter>
@@ -32,7 +32,7 @@
         <activity
             android:name=".ColorDisplayActivity"
             android:label="@string/colors"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".CameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             >

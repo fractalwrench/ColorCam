@@ -1,10 +1,5 @@
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
-    - echo y | android update sdk --no-ui --all --filter "extra-android-support"
-
-dependencies:
-  pre:
     # Android SDK Platform 25
     - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi
 
@@ -13,7 +8,6 @@ dependencies:
 
     # Android Support Library, revision 25.3.0
     - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
-    - echo y | android update sdk --no-ui --all --filter "extra-android-support"
 
 
   cache_directories:

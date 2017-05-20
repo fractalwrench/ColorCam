@@ -9,34 +9,26 @@ import java.io.FileOutputStream
 
 class BitmapRepository(context: Context) {
 
-    private val filename = "data.jpg"
+    private val bmpName = "data.jpg"
     private val photoDir = context.filesDir
 
     fun loadBitmap(): Observable<Bitmap> {
-        return Observable.just(filename)
-                .map { File(photoDir, it) }
-                .map { loadFromFile(it) }
+        return Observable.just(getFileName(bmpName))
+                .map { BitmapFactory.decodeFile(it.absolutePath) }
     }
 
-    fun saveBitmap(bitmap: Bitmap): Observable<Boolean> {
+    fun saveBitmap(bitmap: Bitmap): Observable<Bitmap> {
         return Observable.just(bitmap)
-                .doOnNext {
-                    saveToFile(bitmap)
-                    bitmap.recycle()
+                .doOnNext { bmp ->
+                    val file = getFileName(bmpName)
+                    FileOutputStream(file).use {
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                        it.flush()
+                        it.close()
+                    }
                 }
-                .map { true }
     }
 
-    private fun saveToFile(bitmap: Bitmap) {
-        val file = File(photoDir, filename)
-        FileOutputStream(file).use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            it.flush()
-        }
-    }
-
-    private fun loadFromFile(file: File): Bitmap {
-        return BitmapFactory.decodeFile(file.path)
-    }
+    private fun getFileName(name: String) = File(photoDir, name)
 
 }

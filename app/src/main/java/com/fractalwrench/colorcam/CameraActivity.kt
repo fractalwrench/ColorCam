@@ -52,10 +52,8 @@ class CameraActivity : AppCompatActivity() {
     private fun onBitmapCreated(jpeg: ByteArray?) {
         val observable = Observable.just(jpeg)
                 .map { BitmapFactory.decodeByteArray(jpeg, 0, jpeg?.size!!) }
-                .map {
-                    repository.saveBitmap(it)
-                    it.recycle()
-                }
+                .flatMap { repository.saveBitmap(it) }
+                .map { it.recycle() }
                 .compose { schedulers.apply(it) }
 
         disposable?.add(observable.subscribe({

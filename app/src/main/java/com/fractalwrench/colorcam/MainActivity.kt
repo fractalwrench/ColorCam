@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         disposable?.add(observable.subscribe {
             palette: Palette ->
             palette.getDarkMutedColor(Color.WHITE)
+            startActivity(ColorDisplayActivity.launch(this))
         })
     }
 

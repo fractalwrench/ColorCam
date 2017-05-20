@@ -1,29 +1,33 @@
 package com.fractalwrench.colorcam
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.Palette
 import com.flurgle.camerakit.CameraListener
+import com.fractalwrench.crazycats.injection.DefaultSchedulers
 import com.jakewharton.rxbinding2.view.RxView
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
-
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val cameraListener = object : CameraListener() {
-        override fun onPictureTaken(jpeg: ByteArray?) {
-            super.onPictureTaken(jpeg)
-            val result = BitmapFactory.decodeByteArray(jpeg, 0, jpeg?.size!!)
-        }
-    }
-
+    private val cameraListener = ColorCameraListener()
     private var disposable: CompositeDisposable? = null
+
+    @Inject lateinit var schedulers: DefaultSchedulers
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val app = application as ColorCamApp
+        app.component.inject(this)
     }
 
     override fun onResume() {
@@ -32,8 +36,11 @@ class MainActivity : AppCompatActivity() {
         camera.start()
         camera.setCameraListener(cameraListener)
 
-        disposable?.add(RxView.clicks(cameraButton)
-                .subscribe({ camera.captureImage() }))
+        val observable = RxView.clicks(cameraButton)
+        disposable?.add(observable.subscribe({
+            camera.captureImage()
+            // TODO display progress here!
+        }))
     }
 
     override fun onPause() {
@@ -41,6 +48,29 @@ class MainActivity : AppCompatActivity() {
         camera.stop()
         camera.setCameraListener(null)
         disposable?.dispose()
+    }
+
+    private fun onBitmapCreated(jpeg: ByteArray?) {
+        val observable = Observable.just(jpeg)
+                .map { BitmapFactory.decodeByteArray(jpeg, 0, jpeg?.size!!) }
+                .map { bmp: Bitmap ->
+                    val palette = Palette.from(bmp).generate()
+                    bmp.recycle()
+                    palette
+                }
+                .compose { o -> schedulers.apply(o) }
+
+        disposable?.add(observable.subscribe {
+            palette: Palette ->
+            palette.getDarkMutedColor(Color.WHITE)
+        })
+    }
+
+    private inner class ColorCameraListener : CameraListener() {
+        override fun onPictureTaken(jpeg: ByteArray?) {
+            super.onPictureTaken(jpeg)
+            onBitmapCreated(jpeg)
+        }
     }
 
 }

@@ -58,10 +58,8 @@ dependencies {
     // RxBinding
     compile "com.jakewharton.rxbinding2:rxbinding-kotlin:$rxBindingVersion"
 
-    // Retrofit
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
-    compile "com.squareup.okhttp3:logging-interceptor:$okhttpLoggerVersion"
+    // Camera
+    compile "com.flurgle:camerakit:$cameraKitVersion"
 
     // LeakCanary
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"

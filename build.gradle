@@ -33,6 +33,7 @@ ext {
     // App dependencies
     supportLibraryVersion = '25.3.1'
     constraintLayoutVersion = '1.0.2'
+    cameraKitVersion = '0.9.17'
     junitVersion = '4.12'
     runnerVersion = '0.5'
     rulesVersion = '0.5'

@@ -9,6 +9,19 @@
     tools:context="com.fractalwrench.colorcam.ui.CameraActivity"
     >
 
+    <com.flurgle.camerakit.CameraView
+        android:id="@+id/camera"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        camerakit:ckFlash="auto"
+        camerakit:ckFocus="continuous"
+        camerakit:ckMethod="still"
+        camerakit:ckPermissions="strict"
+        camerakit:ckZoom="pinch"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/color_view_height"
@@ -65,19 +78,6 @@
             />
 
     </LinearLayout>
-
-    <com.flurgle.camerakit.CameraView
-        android:id="@+id/camera"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        camerakit:ckFlash="auto"
-        camerakit:ckFocus="continuous"
-        camerakit:ckMethod="still"
-        camerakit:ckPermissions="strict"
-        camerakit:ckZoom="pinch"
-        />
 
     <LinearLayout
         style="?attr/buttonBarButtonStyle"

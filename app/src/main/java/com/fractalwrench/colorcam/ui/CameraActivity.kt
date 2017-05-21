@@ -32,15 +32,17 @@ class CameraActivity : AppCompatActivity(), CameraView {
         disposable = CompositeDisposable()
         presenter.start(this)
 
-        disposable?.add(RxView.clicks(cameraButton)
+        val d = disposable!!
+
+        d.add(RxView.clicks(cameraButton)
                 .map { presenter.onCaptureClicked() }
                 .subscribe())
 
-        disposable?.add(RxView.clicks(galleryButton)
+        d.add(RxView.clicks(galleryButton)
                 .map { presenter.onGalleryClicked() }
                 .subscribe())
 
-        disposable?.add(RxView.clicks(rateButton)
+        d.add(RxView.clicks(rateButton)
                 .map { presenter.onRateClicked() }
                 .subscribe())
     }

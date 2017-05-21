@@ -32,25 +32,6 @@ class ColorDisplayActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         disposable = CompositeDisposable()
-        disposable?.add(getPaletteObservable().subscribe({
-            palette ->
-            display_bg.setBackgroundColor(palette.vibrant)
-            // TODO use!
-        }, {
-            it?.printStackTrace() // TODO
-        }))
-    }
-
-    private fun getPaletteObservable(): Observable<PaletteColors> {
-        val observable = repository.loadBitmap()
-                .map {
-                    val palette = Palette.from(it).generate()
-                    it.recycle()
-                    palette
-                }
-                .map(::PaletteColors)
-                .compose { schedulers.apply(it) }
-        return observable
     }
 
     override fun onPause() {

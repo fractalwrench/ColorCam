@@ -3,14 +3,17 @@ package com.fractalwrench.colorcam.ui
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.Palette
 import com.flurgle.camerakit.CameraListener
 import com.fractalwrench.colorcam.ColorCamApp
 import com.fractalwrench.colorcam.R
 import com.fractalwrench.colorcam.image.BitmapRepository
+import com.fractalwrench.colorcam.image.PaletteColors
 import com.fractalwrench.crazycats.injection.DefaultSchedulers
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -32,21 +35,31 @@ class CameraActivity : AppCompatActivity(), CameraView {
         app.component.plus(CameraActivityModule()).inject(this)
     }
 
+    private var cameraDisposable: Disposable? = null
+
     override fun onStart() {
         super.onStart()
         disposable = CompositeDisposable()
         presenter.start(this)
 
-        val observable = RxView.clicks(cameraButton)
-        disposable?.add(observable.subscribe({
+
+        // TODO abstract logic out?
+
+        disposable?.add(RxView.clicks(cameraButton).subscribe({
             camera.captureImage()
             // TODO display progress here!
         }))
 
 
-        RxView.clicks(galleryButton) // TODO handle!
-        RxView.clicks(rateButton)
+        disposable?.add(RxView.clicks(galleryButton).subscribe {
+            // TODO launch gallery
+        })
+
+        disposable?.add(RxView.clicks(rateButton).subscribe {
+            IntentUtils.launchPlayStoreListing(this)
+        })
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -62,6 +75,7 @@ class CameraActivity : AppCompatActivity(), CameraView {
 
     override fun onPause() {
         super.onPause()
+        cameraDisposable?.dispose()
         camera.stop()
         camera.setCameraListener(null)
     }
@@ -71,13 +85,27 @@ class CameraActivity : AppCompatActivity(), CameraView {
                 .map { BitmapFactory.decodeByteArray(jpeg, 0, jpeg?.size!!) }
                 .flatMap { repository.saveBitmap(it) }
                 .map { it.recycle() }
+                .flatMap { getPaletteObservable() }
                 .compose { schedulers.apply(it) }
 
         disposable?.add(observable.subscribe({
-            startActivity(ColorDisplayActivity.Companion.launch(this))
-        }) {
+            palette ->
+            color_view.setBackgroundColor(palette.vibrant) // TODO use!
+        }, {
             it?.printStackTrace() // TODO
-        })
+        }))
+    }
+
+    private fun getPaletteObservable(): Observable<PaletteColors> {
+        val observable = repository.loadBitmap()
+                .map {
+                    val palette = Palette.from(it).generate()
+                    it.recycle()
+                    palette
+                }
+                .map(::PaletteColors)
+                .compose { schedulers.apply(it) }
+        return observable
     }
 
     private inner class ColorCameraListener : CameraListener() {

@@ -8,7 +8,6 @@ import com.fractalwrench.colorcam.R
 import com.fractalwrench.colorcam.image.PaletteColors
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -27,8 +26,6 @@ class CameraActivity : AppCompatActivity(), CameraView {
         val app = application as ColorCamApp
         app.component.plus(CameraActivityModule()).inject(this)
     }
-
-    private var cameraDisposable: Disposable? = null
 
     override fun onStart() {
         super.onStart()
@@ -62,7 +59,6 @@ class CameraActivity : AppCompatActivity(), CameraView {
 
     override fun onPause() {
         super.onPause()
-        cameraDisposable?.dispose()
         camera.stop()
         camera.setCameraListener(null)
     }
@@ -75,6 +71,12 @@ class CameraActivity : AppCompatActivity(), CameraView {
 
         override fun onCameraOpened() {
             super.onCameraOpened()
+            presenter.onCameraStateChanged(true)
+        }
+
+        override fun onCameraClosed() {
+            super.onCameraClosed()
+            presenter.onCameraStateChanged(false)
         }
     }
 

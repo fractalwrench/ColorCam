@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.fractalwrench.colorcam.CameraActivity"
+    tools:context="com.fractalwrench.colorcam.ui.CameraActivity"
     >
 
     <com.flurgle.camerakit.CameraView
@@ -22,11 +22,39 @@
         camerakit:ckZoom="pinch"
         />
 
-    <Button
-        android:id="@+id/cameraButton"
+    <LinearLayout
+        style="?attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/capture"
-        />
+        >
+
+        <Button
+            android:id="@+id/cameraButton"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/capture"
+            />
+
+        <Button
+            android:id="@+id/galleryButton"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/gallery"
+            />
+
+        <Button
+            android:id="@+id/rateButton"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rate"
+            />
+    </LinearLayout>
+
 
 </LinearLayout>

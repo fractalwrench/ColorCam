@@ -2,4 +2,6 @@
     <string name="app_name">ColorCam</string>
     <string name="capture">Capture</string>
     <string name="colors">Colors</string>
+    <string name="rate">Rate</string>
+    <string name="gallery">Gallery</string>
 </resources>

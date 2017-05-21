@@ -9,6 +9,56 @@
     tools:context="com.fractalwrench.colorcam.ui.CameraActivity"
     >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        >
+
+        <View
+            android:id="@+id/vibrantView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <View
+            android:id="@+id/vibrantLightView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <View
+            android:id="@+id/vibrantDarkView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <View
+            android:id="@+id/mutedView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <View
+            android:id="@+id/mutedLightView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <View
+            android:id="@+id/mutedDarkView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
     <com.flurgle.camerakit.CameraView
         android:id="@+id/camera"
         android:layout_width="match_parent"
@@ -20,12 +70,6 @@
         camerakit:ckMethod="still"
         camerakit:ckPermissions="strict"
         camerakit:ckZoom="pinch"
-        />
-
-    <View
-        android:id="@+id/color_view"
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
         />
 
     <LinearLayout

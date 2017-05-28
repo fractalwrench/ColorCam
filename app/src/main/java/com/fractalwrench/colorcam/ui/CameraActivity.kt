@@ -1,7 +1,11 @@
 package com.fractalwrench.colorcam.ui
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.flurgle.camerakit.CameraListener
 import com.fractalwrench.colorcam.ColorCamApp
 import com.fractalwrench.colorcam.R
@@ -13,6 +17,8 @@ import javax.inject.Inject
 
 
 class CameraActivity : AppCompatActivity(), CameraView {
+
+    private val PHOTO_REQUEST_CODE = 9001
 
     private val cameraListener = ColorCameraListener()
     private var disposable: CompositeDisposable? = null
@@ -65,10 +71,64 @@ class CameraActivity : AppCompatActivity(), CameraView {
         camera.setCameraListener(null)
     }
 
+
+    // CameraView
+
+
+    override fun launchRate() {
+        IntentUtils.launchPlayStoreListing(this)
+    }
+
+    override fun launchGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        val chooserIntent = Intent.createChooser(intent, getString(R.string.pick_photo))
+        startActivityForResult(chooserIntent, PHOTO_REQUEST_CODE)
+    }
+
+    override fun capturePhoto() {
+        camera.captureImage()
+    }
+
+    override fun displayCapturedImage(bmp: Bitmap, colors: PaletteColors) {
+        static_image_preview.visibility = View.VISIBLE
+        camera.visibility = View.GONE
+        static_image_preview.setImageBitmap(bmp)
+        camera.stop()
+        displayPaletteColors(colors)
+    }
+
+    override fun displayCameraPreview() {
+        static_image_preview.visibility = View.GONE
+        camera.visibility = View.VISIBLE
+        camera.start()
+    }
+
+
+    // Private
+
+
+    private fun displayPaletteColors(colors: PaletteColors) {
+        vibrantView.setBackgroundColor(colors.vibrant)
+        vibrantLightView.setBackgroundColor(colors.vibrantLight)
+        vibrantDarkView.setBackgroundColor(colors.vibrantDark)
+        mutedView.setBackgroundColor(colors.muted)
+        mutedLightView.setBackgroundColor(colors.mutedLight)
+        mutedDarkView.setBackgroundColor(colors.mutedDark)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (PHOTO_REQUEST_CODE == requestCode && resultCode == Activity.RESULT_OK) {
+            presenter.handleGalleryResult(data, this.applicationContext)
+        }
+    }
+
     private inner class ColorCameraListener : CameraListener() {
         override fun onPictureTaken(jpeg: ByteArray?) {
             super.onPictureTaken(jpeg)
-            presenter.onBitmapCreated(jpeg)
+            presenter.onCameraBitmapCaptured(jpeg)
         }
 
         override fun onCameraOpened() {
@@ -83,27 +143,4 @@ class CameraActivity : AppCompatActivity(), CameraView {
     }
 
 
-    // CameraView
-
-
-    override fun displayPlayStoreListing() {
-        IntentUtils.launchPlayStoreListing(this)
-    }
-
-    override fun launchGallery() {
-        TODO("not implemented") // TODO launch gallery
-    }
-
-    override fun captureImagePreview() {
-        camera.captureImage() // TODO
-    }
-
-    override fun updatePaletteColors(colors: PaletteColors) {
-        vibrantView.setBackgroundColor(colors.vibrant)
-        vibrantLightView.setBackgroundColor(colors.vibrantLight)
-        vibrantDarkView.setBackgroundColor(colors.vibrantDark)
-        mutedView.setBackgroundColor(colors.muted)
-        mutedLightView.setBackgroundColor(colors.mutedLight)
-        mutedDarkView.setBackgroundColor(colors.mutedDark)
-    }
 }

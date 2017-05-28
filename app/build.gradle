@@ -56,7 +56,6 @@ dependencies {
     // RxJava
     compile "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    compile "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$rxRetrofitAdapterVersion"
 
     // RxBinding
     compile "com.jakewharton.rxbinding2:rxbinding-kotlin:$rxBindingVersion"

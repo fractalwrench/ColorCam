@@ -8,7 +8,7 @@ import io.reactivex.disposables.CompositeDisposable
  */
 abstract class Presenter<T> {
 
-    var contentView: T? = null
+    var view: T? = null
     protected var compositeDisposable: CompositeDisposable? = null
 
     private var isPresenting = false
@@ -16,14 +16,14 @@ abstract class Presenter<T> {
     /**
      * Notify the presenter that it should start telling its View how to display itself.
      */
-    open fun start(contentView: T) {
+    open fun start(view: T) {
         compositeDisposable = CompositeDisposable()
 
         if (isPresenting) {
             throw IllegalStateException("Already presenting, please call stop() first")
         }
 
-        this.contentView = contentView
+        this.view = view
         isPresenting = true
     }
 
@@ -34,7 +34,7 @@ abstract class Presenter<T> {
         if (!isPresenting) {
             throw IllegalStateException("Already not presenting, please call start() first")
         }
-        this.contentView = null
+        this.view = null
         this.isPresenting = false
 
         if (compositeDisposable!!.isDisposed) {
